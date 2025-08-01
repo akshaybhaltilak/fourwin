@@ -3,11 +3,16 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 
 // Service options for predefined services
 const serviceOptions = [
-  { id: 'basic', name: 'Basic Wash', price: 200 },
-  { id: 'premium', name: 'Premium Wash', price: 400 },
-  { id: 'interior', name: 'Interior Cleaning', price: 300 },
-  { id: 'exterior', name: 'Exterior Polish', price: 350 },
-  { id: 'standard', name: 'Standard Service', price: 250 },
+  { id: 'basic', name: 'Car Body Wash', price5: 300, price7: 400 },
+    { id: 'premium', name: 'Top Up Car Wash', price5: 250, price7: 350 },
+    { id: 'interior', name: 'Interior Polish', price5: 100, price7: 100 },
+    { id: 'exterior', name: 'Outer Polish', price5: 100, price7: 100 },
+    { id: 'standard', name: 'Interior Detailinng Clean', price5: 2000, price7: 3000 },
+    { id: 'rubbing', name: 'Car Rubbing', price5: 0, price7: 0 },
+    { id: 'coating', name: 'Car Coating', price5: 0, price7: 0 },
+    { id: 'clean', name: 'Headlight Clean', price5: 0, price7: 0 },
+    { id: 'mirror', name: 'Mirror Scratch Remove', price5: 0, price7: 0 },
+    { id: 'other', name: 'Other Services', price5: 0, price7: 0 },
 ];
 
 // Create styles with red and yellow color scheme
@@ -323,13 +328,20 @@ const InvoiceComponent = ({ service, services = [] }) => {
           {serviceItems.map((item, index) => {
             const serviceDetail = serviceOptions.find(s => s.id === item.type);
             const name = serviceDetail ? serviceDetail.name : (item.name || 'Custom Service');
-            const price = item.amount !== undefined ? Number(item.amount) : (serviceDetail ? serviceDetail.price : 0);
+            // Get default rate based on seater
+            let defaultRate = 0;
+            if (serviceDetail) {
+              defaultRate = service.seater === '7' ? serviceDetail.price7 : serviceDetail.price5;
+            }
+            // If user entered a custom amount, show that as amount, but show default rate as rate
+            const rate = defaultRate;
+            const amount = item.amount !== undefined ? Number(item.amount) : defaultRate;
             return (
               <View key={index} style={[styles.tableRow, index % 2 === 0 && styles.tableRowAlternate]}>
                 <Text style={styles.colSno}>{index + 1}.</Text>
                 <Text style={styles.colParticulars}>{name}</Text>
-                <Text style={styles.colRate}>{price.toLocaleString('en-IN')}</Text>
-                <Text style={styles.colAmount}>{price.toLocaleString('en-IN')}</Text>
+                <Text style={styles.colRate}>{rate.toLocaleString('en-IN')}</Text>
+                <Text style={styles.colAmount}>{amount.toLocaleString('en-IN')}</Text>
               </View>
             );
           })}
